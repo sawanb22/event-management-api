@@ -1,9 +1,16 @@
 import express from 'express';
+import eventRoutes from './src/routes/event.routes.js';
 
 const app = express();
 const PORT = 3000;
 
-app.get('/', (res, req) => 
+//parse json bodies from incoming requests
+app.use(express.json());
+
+//routes
+app.use('/api', eventRoutes);
+
+app.get('/', (req, res) => 
     res.send(`Server is running at port ${PORT}`)
 )
 

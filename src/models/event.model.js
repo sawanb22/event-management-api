@@ -23,6 +23,23 @@ async function createEvent({ title, dateTime, location, capacity}) {
     }
 }
 
+//for upcoming events lists
+async function getUpcomingEvents() {
+    const sql = `
+    SELECT * FROM events
+    WHERE date_time > NOW()
+    ORDER BY date_time ASC, location ASC;
+    `;
+
+    try {
+        const { rows } = await pool.query(sql);
+        return rows;
+    } catch (error) {
+        console.error("Error Executing 'getUpcomingEvents' query", error);
+        throw error;
+    }
+}    
+
 //retrieving a single event by its id and all the registered users in it 
 async function getEventWithUsers(eventId) {
     const sql = `
@@ -78,7 +95,35 @@ async function getEventWithUsers(eventId) {
     }
 }
 
-export {
-  createEvent,
-  getEventWithUsers
-};
+// Get event stats: total registrations, remaining capacity, percentage used
+async function getEventStats(eventId) {
+    // Get event capacity and total registrations in one query
+    const sql = `
+        SELECT 
+            e.capacity,
+            COUNT(r.user_id) AS total_registrations
+        FROM events e
+        LEFT JOIN registrations r ON e.id = r.event_id
+        WHERE e.id = $1
+        GROUP BY e.id, e.capacity;
+    `;
+    try {
+        const { rows } = await pool.query(sql, [eventId]);
+        if (rows.length === 0) {
+            return null; // Event not found
+        }
+        const { capacity, total_registrations } = rows[0];
+        const remainingCapacity = capacity - total_registrations;
+        const percentageUsed = capacity > 0 ? (total_registrations / capacity) * 100 : 0;
+        return {
+            totalRegistrations: Number(total_registrations),
+            remainingCapacity: Number(remainingCapacity),
+            percentageUsed: Number(percentageUsed.toFixed(2))
+        };
+    } catch (error) {
+        console.error("Error executing 'getEventStats' query", error);
+        throw error;
+    }
+}
+
+export { createEvent, getUpcomingEvents, getEventWithUsers, getEventStats };

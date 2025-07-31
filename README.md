@@ -16,7 +16,21 @@ A Node.js API for managing events.
 
 ## API Endpoints
 
-Coming soon...
+### Create Event
+POST /api/events
+
+**Body:**
+{
+  "title": "Sample Event",
+  "dateTime": "2025-08-01T10:00:00",
+  "location": "New York",
+  "capacity": 100
+}
+
+**Response:**
+{
+  "eventId": 1
+}
 
 ## Technologies Used
 

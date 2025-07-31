@@ -1,4 +1,4 @@
-import { createEventService, getEventDetailsService } from '../services/event.service.js';
+import { createEventService, getEventDetailsService, getUpcomingEventsService, getEventStatsService } from '../services/event.service.js';
 
 async function createEventController(req, res) {
     try {
@@ -35,6 +35,31 @@ async function getEventDetailsController(req, res) {
     } catch (error) {
         console.error("Error in 'getEventDetailsController'", error);
         res.status(500).json({ error: error.message });
+    }
+}
+
+export async function getUpcomingEventsController(req, res) {
+    try {
+        const events = await getUpcomingEventsService();
+        res.status(200).json(events);
+    } catch (error) {
+        console.error("Error in 'getUpcomingEventsController'", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export async function getEventStatsController(req, res) {
+    const { eventId } = req.params;
+    try {
+        const stats = await getEventStatsService(eventId);
+        res.status(200).json(stats);
+    } catch (error) {
+        console.error("Error in 'getEventStatsController'", error);
+        if (error.message === 'Event not found') {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
     }
 }
 

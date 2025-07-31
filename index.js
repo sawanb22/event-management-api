@@ -2,6 +2,8 @@ import express from 'express';
 import eventRoutes from './src/routes/event.routes.js';
 import registrationRoutes from './src/routes/registration.routes.js';
 import userRoutes from './src/routes/user.routes.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +15,7 @@ app.use(express.json());
 app.use('/api', eventRoutes);
 app.use('/api', registrationRoutes);
 app.use('/api', userRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (req, res) => 
     res.send(`Server is running at port ${PORT}`)

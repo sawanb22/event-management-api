@@ -1,4 +1,4 @@
-import { createEvent } from "../models/event.model.js";
+import { createEvent, getEventWithUsers } from "../models/event.model.js";
 
 async function createEventService(eventData) {
     try {
@@ -11,4 +11,23 @@ async function createEventService(eventData) {
     }
 }
 
-export { createEventService };
+async function getEventDetailsService(eventId) {
+    if (!eventId) {
+        throw new Error('Event ID is required');
+    }
+
+    try {
+        const eventDetails = await getEventWithUsers(eventId);
+
+        if (!eventDetails) {
+            throw new Error('Event not found');
+        }
+
+        return eventDetails;
+    } catch (error) {
+        console.error("Error in 'getEventDetailsService'", error);
+        throw error;
+    }
+}
+
+export { createEventService, getEventDetailsService };

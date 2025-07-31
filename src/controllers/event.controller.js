@@ -1,4 +1,4 @@
-import { createEventService } from '../services/event.service.js';
+import { createEventService, getEventDetailsService } from '../services/event.service.js';
 
 async function createEventController(req, res) {
     try {
@@ -26,4 +26,16 @@ async function createEventController(req, res) {
     }
 }
 
-export { createEventController };
+async function getEventDetailsController(req, res) {
+    const { eventId } = req.params;
+
+    try {
+        const eventDetails = await getEventDetailsService(eventId);
+        res.status(200).json(eventDetails);
+    } catch (error) {
+        console.error("Error in 'getEventDetailsController'", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export { createEventController, getEventDetailsController };

@@ -1,5 +1,7 @@
 import express from 'express';
 import eventRoutes from './src/routes/event.routes.js';
+import registrationRoutes from './src/routes/registration.routes.js';
+import userRoutes from './src/routes/user.routes.js';
 
 const app = express();
 const PORT = 3000;
@@ -9,6 +11,8 @@ app.use(express.json());
 
 //routes
 app.use('/api', eventRoutes);
+app.use('/api', registrationRoutes);
+app.use('/api', userRoutes);
 
 app.get('/', (req, res) => 
     res.send(`Server is running at port ${PORT}`)
